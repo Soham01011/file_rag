@@ -11,9 +11,9 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,          # Use ["*"] to allow all origins (for testing only)
+    allow_origins=["*"],  # Change this to specific frontend URL in production
     allow_credentials=True,
-    allow_methods=["*"],            # This ensures OPTIONS requests are allowed
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
