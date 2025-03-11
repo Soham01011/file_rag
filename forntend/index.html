@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <!-- AngularJS Library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <!-- Application Script -->
+  <script src="app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+    .login-form {
+      max-width: 300px;
+      margin: auto;
+    }
+    label, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-form" ng-controller="AuthController">
+    <h2>Login</h2>
+    <form ng-submit="login()">
+      <label for="username">Username:</label>
+      <input type="text" id="username" ng-model="user.username" placeholder="Enter username" required>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" ng-model="user.password" placeholder="Enter password" required>
+      
+      <button type="submit">Login</button>
+    </form>
+    <div class="error" ng-if="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+</body>
+</html>
