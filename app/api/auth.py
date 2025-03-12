@@ -30,7 +30,7 @@ async def register(user: UserRegister):
     token_data = {"sub": registered_user["username"]}
     access_token = create_access_token(token_data)
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "registration_data": registered_user}
 
 @router.get("/verify")
 async def verify_token_route(token: str = Depends(oauth2_scheme)):

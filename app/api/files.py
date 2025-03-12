@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
-from app.services.file_service import save_csv_file, record_file_metadata
+from app.services.file_service import save_file, record_file_metadata
 from app.api.dependencies import get_current_user
 from app.schemas.file import FileUpload
 from bson import ObjectId
@@ -7,22 +7,31 @@ from app.database.connection import files_collection
 
 router = APIRouter(prefix="/files", tags=["Files"])
 
-@router.post("/upload-csv")
-async def upload_csv(
+ALLOWED_FILE_TYPES = {
+    "text/plain",      # .txt
+    "application/pdf", # .pdf
+    "application/msword",  # .doc
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # .docx
+    "text/csv"  # .csv
+}
+
+@router.post("/upload")
+async def upload_file(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
-    # Validate that the uploaded file is a CSV.
-    if file.content_type != "text/csv":
-        raise HTTPException(status_code=400, detail="Invalid file type. Only CSV files are allowed.")
+    # Validate file type
+    if file.content_type not in ALLOWED_FILE_TYPES:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only TXT, PDF, DOC, DOCX, and CSV files are allowed.")
     
-    # Save the CSV file.
-    file_path = await save_csv_file(file)
+    # Save the uploaded file
+    file_path = await save_file(file)  # Implement this function to store files START FROM HERE----------------------------------------------------------------
     
-    # Record file metadata with the owner's username.
+    # Record file metadata
     metadata = await record_file_metadata(file.filename, current_user["username"], file_path)
     
     return {"message": "File uploaded successfully", "file_metadata": metadata}
+
 
 @router.get("/metadata/{file_id}", response_model=FileUpload)
 async def get_file_metadata(file_id: str, current_user: dict = Depends(get_current_user)):

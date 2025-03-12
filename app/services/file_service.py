@@ -8,7 +8,7 @@ UPLOAD_DIR = "uploads"
 if not os.path.exists(UPLOAD_DIR):
     os.mkdir(UPLOAD_DIR)
 
-async def save_csv_file(uploaded_file: UploadFile) -> str:
+async def save_file(uploaded_file: UploadFile) -> str:
     timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
     filename =  f"{timestamp}_{uploaded_file.filename}"
     file_path = os.path.join(UPLOAD_DIR, filename)
@@ -30,6 +30,10 @@ async def record_file_metadata(filename: str, username: str, filelocation: str) 
         "filelocation": filelocation,
         "uploaded_at": datetime.utcnow()
     }
+
+    print(f"📌 Inserting File Metadata: {file_data}")
+
     result = await files_collection.insert_one(file_data)
-    file_data["id"] = str(result.inserted_id)
+    file_data["_id"] = str(result.inserted_id)
+
     return file_data
