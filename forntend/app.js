@@ -99,6 +99,31 @@ app.controller("DashboardController", function($scope, FileUploadService, $http,
         $location.path("/login");
     };
 
+
+});
+
+app.controller("KnowledgeBaseController", function($scope, $http, FileUploadService, $location) {
+    var token = localStorage.getItem("access_token");
+    if (!token) {
+        $scope.userFiles = [];
+        $location.path("/login");
+        return;
+    }
+
+    $scope.uploadMessage = "";
+    $scope.userFiles = [];
+
+    // Fetch user's uploaded files (if needed)
+    $http.get("http://127.0.0.1:8000/files/myfiles", {
+        headers: { "Authorization": "Bearer " + token }
+    }).then(function(response) {
+        $scope.userFiles = response.data;
+        console.log("User files:", $scope.userFiles);
+    }).catch(function(error) {
+        console.error("Failed to fetch files:", error);
+        $scope.userFiles = [];
+    });
+
     // Handle File Upload
     $scope.uploadFile = function() {
         if (!$scope.file) {
@@ -110,32 +135,13 @@ app.controller("DashboardController", function($scope, FileUploadService, $http,
             .then(function(response) {
                 $scope.uploadMessage = "File uploaded successfully!";
                 console.log("Upload response:", response);
+                // Optionally refresh the file list here
             })
             .catch(function(error) {
                 console.error("File upload failed:", error);
                 $scope.uploadMessage = "Upload failed. Try again.";
             });
     };
-});
-
-app.controller("KnowledgeBaseController", function($scope, $http) {
-    var token = localStorage.getItem("access_token");
-
-    if (!token) {
-        $scope.userFiles = [];
-        return;
-    }
-
-    // Fetch user's uploaded files
-    $http.get("http://127.0.0.1:8000/files/myfiles", {
-        headers: { "Authorization": "Bearer " + token }
-    }).then(function(response) {
-        $scope.userFiles = response.data;
-        console.log($scope.userFiles)
-    }).catch(function(error) {
-        console.error("Failed to fetch files:", error);
-        $scope.userFiles = [];
-    });
 });
 
 app.controller("ChatsController", function ($scope, $http) {
@@ -180,23 +186,23 @@ app.controller("ChatsController", function ($scope, $http) {
     };
 });
 
-
-// Directive to handle file input binding
 app.directive("fileModel", function($parse) {
     return {
         restrict: "A",
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
-
-            element.bind("change", function() {
-                scope.$apply(function() {
-                    modelSetter(scope, element[0].files[0]);
+            element.bind("change", function(){
+                scope.$apply(function(){
+                    var selectedFile = element[0].files[0];
+                    console.log("File selected:", selectedFile);  // This should log the file object
+                    modelSetter(scope, selectedFile);
                 });
             });
         }
     };
 });
+
 
 app.service("FileUploadService", function($http) {
     this.uploadFile = function(file) {

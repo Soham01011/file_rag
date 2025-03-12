@@ -23,14 +23,12 @@
         <button ng-click="sendMessage()">Send</button>
     </div>
     
-    
-
     <div ng-show="activeTab === 'knowledge'" ng-controller="KnowledgeBaseController">
         <h3>Upload Files to Knowledge Base</h3>
         <input type="file" file-model="file" />
         <button ng-click="uploadFile()">Upload</button>
         <p>{{ uploadMessage }}</p>
-
+    
         <h3>Your Uploaded Files</h3>
         <ul>
             <li ng-repeat="file in userFiles">
@@ -39,6 +37,8 @@
         </ul>
         <p ng-if="userFiles.length === 0">No files uploaded yet.</p>
     </div>
+    
+    
 </div>
 
 

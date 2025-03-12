@@ -26,8 +26,8 @@ async def upload_file(
         raise HTTPException(status_code=400, detail="Invalid file type. Only TXT, PDF, DOC, DOCX, and CSV files are allowed.")
     
     # Save the uploaded file
-    file_path = await save_file(file)  # Implement this function to store files START FROM HERE----------------------------------------------------------------
-    
+    file_path = await save_file(file)  # Implement this function to store files 
+
     # Record file metadata
     metadata = await record_file_metadata(file.filename, current_user["username"], file_path)
     

@@ -4,6 +4,9 @@ from fastapi import UploadFile
 import aiofiles
 from app.database.connection import files_collection  
 from typing import List
+from app.services.document_loaders import extract_text_from_file
+from app.services.embedding import add_text_to_user_index
+
 UPLOAD_DIR = "uploads"
 
 if not os.path.exists(UPLOAD_DIR):
@@ -31,6 +34,12 @@ async def record_file_metadata(filename: str, username: str, filelocation: str) 
         "filelocation": filelocation,
         "uploaded_at": datetime.utcnow()
     }
+
+    raw_text = extract_text_from_file(filelocation)
+
+    embeddings = add_text_to_user_index(username,raw_text)
+
+    print ("Embeddings ", embeddings)
 
     print(f"📌 Inserting File Metadata: {file_data}")
 
