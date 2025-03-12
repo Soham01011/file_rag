@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import UploadFile
 import aiofiles
 from app.database.connection import files_collection  
+from typing import List
 UPLOAD_DIR = "uploads"
 
 if not os.path.exists(UPLOAD_DIR):
@@ -37,3 +38,8 @@ async def record_file_metadata(filename: str, username: str, filelocation: str) 
     file_data["_id"] = str(result.inserted_id)
 
     return file_data
+
+async def get_user_files(username: str) -> List[dict]:
+    files_cursor = files_collection.find({"username": username})
+    files = await files_cursor.to_list(length=None)  
+    return files

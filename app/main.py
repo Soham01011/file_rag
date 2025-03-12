@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import auth, files
+from app.api import auth, files, chat
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="FastAPI MongoDB Auth App")
@@ -15,9 +15,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(files.router)
-
-app.include_router(auth.router)
-app.include_router(files.router)
+app.include_router(chat.router)
 
 @app.get("/")
 def read_root():

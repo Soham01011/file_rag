@@ -6,3 +6,8 @@ class FileUpload(BaseModel):
     username: str
     filelocation: str
     uploaded_at: datetime
+
+class Myfiles(BaseModel):
+    filename: str
+    username: str
+    

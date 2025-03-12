@@ -1,8 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
-from app.services.file_service import save_file, record_file_metadata
+from app.services.file_service import save_file, record_file_metadata, get_user_files
 from app.api.dependencies import get_current_user
-from app.schemas.file import FileUpload
+from app.schemas.file import FileUpload, Myfiles
 from bson import ObjectId
+from typing import List
 from app.database.connection import files_collection
 
 router = APIRouter(prefix="/files", tags=["Files"])
@@ -46,3 +47,11 @@ async def get_file_metadata(file_id: str, current_user: dict = Depends(get_curre
     
     file_data["id"] = str(file_data["_id"])
     return file_data
+
+@router.get("/myfiles", response_model=List[Myfiles])
+async def get_my_files(user: dict = Depends(get_current_user)):
+    user_files = await get_user_files(user["username"])  # Await the async function
+    return user_files
+
+
+
