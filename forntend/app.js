@@ -118,6 +118,69 @@ app.controller("DashboardController", function($scope, FileUploadService, $http,
     };
 });
 
+app.controller("KnowledgeBaseController", function($scope, $http) {
+    var token = localStorage.getItem("access_token");
+
+    if (!token) {
+        $scope.userFiles = [];
+        return;
+    }
+
+    // Fetch user's uploaded files
+    $http.get("http://127.0.0.1:8000/files/myfiles", {
+        headers: { "Authorization": "Bearer " + token }
+    }).then(function(response) {
+        $scope.userFiles = response.data;
+        console.log($scope.userFiles)
+    }).catch(function(error) {
+        console.error("Failed to fetch files:", error);
+        $scope.userFiles = [];
+    });
+});
+
+app.controller("ChatsController", function ($scope, $http) {
+    $scope.chatHistory = [];  // Initialize chat history
+    $scope.userMessage = "";  // Input field binding
+
+    var token = localStorage.getItem("access_token");
+
+    // Send message function
+    $scope.sendMessage = function () {
+        if (!$scope.userMessage.trim()) return;  // Prevent empty messages
+
+        var data = { user_message: $scope.userMessage };
+
+        $http.post("http://127.0.0.1:8000/chat/chat", data, {
+            headers: { 
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"  // Ensure JSON request
+            }
+        }).then(function (response) {
+            console.log("API Response:", response.data);
+
+            $scope.$applyAsync(() => {
+                // Push user message and Gemini response
+                $scope.chatHistory.push({
+                    user_message: $scope.userMessage,
+                    gemini_response: response.data.gemini_response  // Adjust based on API response
+                });
+                $scope.userMessage = "";  // Clear input field
+            });
+        }).catch(function (error) {
+            console.error("Chat API Error:", error);
+
+            // Display error in chat history
+            $scope.$applyAsync(() => {
+                $scope.chatHistory.push({
+                    user_message: $scope.userMessage,
+                    gemini_response: "⚠️ Error: Unable to process request."
+                });
+            });
+        });
+    };
+});
+
+
 // Directive to handle file input binding
 app.directive("fileModel", function($parse) {
     return {
