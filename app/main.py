@@ -1,24 +1,21 @@
 from fastapi import FastAPI
-from app.api import auth, files
+from app.api import auth, files, chat
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="FastAPI MongoDB Auth App")
 
-origins = [
-    "http://localhost",
-    "http://localhost:3000",  # add your frontend domain if different
-]
-
+# Allow all origins (Not recommended for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this to specific frontend URL in production
+    allow_origins=["*"],  # This allows requests from any domain
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # This allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # This allows all headers
 )
 
 app.include_router(auth.router)
 app.include_router(files.router)
+app.include_router(chat.router)
 
 @app.get("/")
 def read_root():

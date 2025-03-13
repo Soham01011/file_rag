@@ -15,6 +15,7 @@ async def authenticate_user(username: str, password: str) -> dict:
     return user
 
 async def register_data(username: str, email: str, password: str, conf_pass: str) -> dict:
+    print("Register function ", username, email,password, conf_pass)
     # Ensure the password and confirmation match
     if password != conf_pass:
         return {"error": "Passwords do not match"}
@@ -33,7 +34,7 @@ async def register_data(username: str, email: str, password: str, conf_pass: str
         "email": email,
         "hashed_password": hashed_password
     }
-    
+    print(new_user)
     # Insert the new user into the database
     result = await users_collection.insert_one(new_user)
     

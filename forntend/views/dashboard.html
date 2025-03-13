@@ -1,4 +1,68 @@
-<h2>Welcome to Your Dashboard</h2>
-<p>You are logged in!</p>
+<div ng-controller="DashboardController">
+    <h2>Welcome, {{ username }}</h2>
+    <button ng-click="logoutUser()">Logout</button>
 
-<button ng-click="logoutUser()">Logout</button>
+    <div>
+        <button ng-click="setTab('chats')">Chats</button>
+        <button ng-click="setTab('knowledge')">Knowledge Base</button>
+    </div>
+
+    <div ng-show="activeTab === 'chats'" ng-controller="ChatsController">
+        <h3>Chats Section</h3>
+    
+        <!-- Chat Messages Display -->
+        <div class="chat-box">
+            <div ng-repeat="chat in chatHistory">
+                <p><strong>You:</strong> {{ chat.user_message }}</p>
+                <p><strong>Gemini:</strong> {{ chat.gemini_response }}</p>
+            </div>
+        </div>
+    
+        <!-- Chat Input -->
+        <textarea ng-model="userMessage" placeholder="Type your message..."></textarea>
+        <button ng-click="sendMessage()">Send</button>
+    </div>
+    
+    <div ng-show="activeTab === 'knowledge'" ng-controller="KnowledgeBaseController">
+        <h3>Upload Files to Knowledge Base</h3>
+        <input type="file" file-model="file" />
+        <button ng-click="uploadFile()">Upload</button>
+        <p>{{ uploadMessage }}</p>
+    
+        <h3>Your Uploaded Files</h3>
+        <ul>
+            <li ng-repeat="file in userFiles">
+                {{ file.filename }}
+            </li>
+        </ul>
+        <p ng-if="userFiles.length === 0">No files uploaded yet.</p>
+    </div>
+    
+    
+</div>
+
+
+<style>
+    .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tabs button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+.tabs button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+input[type="file"] {
+    margin: 10px 0;
+}
+
+</style>
