@@ -3,6 +3,8 @@ from app.database.connection import chats_collection
 from app.services.gemini_api import get_gemini_response
 from bson import ObjectId
 from fastapi.encoders import jsonable_encoder
+from app.services.embedding import search_user_index, embed_text
+from app.services.file_service import get_files_by_ext_ids
 
 async def process_chat(username: str, user_message: str):
     """
@@ -15,8 +17,15 @@ async def process_chat(username: str, user_message: str):
     # Format past chats as context
     context = "\n".join([f"User: {chat['user_message']}\nBot: {chat['gemini_response']}" for chat in past_chats])
 
+    query_embedding = embed_text(user_message)
+
+    ext_ids = search_user_index(username, query_embedding, k=3)
+    doc_texts = await get_files_by_ext_ids(username, ext_ids)
+    doc_context = "\n".join([f"[Relevant Document {i+1}]\n{text}" 
+                           for i, text in enumerate(doc_texts)])
+    print("######## DOC CONTEXT : ",doc_context)
     # Send user message with context to Gemini API
-    prompt = f"Previous conversation:\n{context}\nNow, the user says: {user_message}\nRespond accordingly."
+    prompt = f"Document Context:\n{doc_context}Previous conversation:\n{context}\nNow, the user says: {user_message}\nRespond accordingly."
     gemini_response = await get_gemini_response(prompt)
 
     chat_entry = {
