@@ -1,67 +1,54 @@
-<div ng-controller="DashboardController">
+<div ng-controller="DashboardController" class="dashboard fade-in">
     <h2>Welcome, {{ username }}</h2>
-    <button ng-click="logoutUser()">Logout</button>
-
-    <div>
-        <button ng-click="setTab('chats')">Chats</button>
-        <button ng-click="setTab('knowledge')">Knowledge Base</button>
+    <button ng-click="logoutUser()" class="btn danger">Logout</button>
+    
+    <div class="tabs">
+      <button ng-click="setTab('chats')" ng-class="{ active: activeTab === 'chats' }">Chats</button>
+      <button ng-click="setTab('knowledge')" ng-class="{ active: activeTab === 'knowledge' }">Knowledge Base</button>
     </div>
-
-    <div ng-show="activeTab === 'chats'" ng-controller="ChatsController">
-        <h3>Chats Section</h3>
     
-        <!-- Chat Messages Display -->
-        <div class="chat-box">
-            <div ng-repeat="chat in chatHistory">
-                <p><strong>You:</strong> {{ chat.user_message }}</p>
-                <p><strong>Gemini:</strong> {{ chat.gemini_response }}</p>
-            </div>
+    <div ng-show="activeTab === 'chats'" ng-controller="ChatsController" class="chat-section">
+      <h3>Chats Section</h3>
+      <!-- Chat Messages Display -->
+      <div class="chat-box">
+        <div ng-repeat="chat in chatHistory" class="fade-in">
+          <div class="chat-message user-message">
+            <p><strong>You:</strong> {{ chat.user_message }}</p>
+          </div>
+          <div class="chat-message gemini-message">
+            <p><strong>Gemini:</strong> {{ chat.gemini_response }}</p>
+          </div>
         </div>
-    
-        <!-- Chat Input -->
+      </div>
+      <!-- Chat Input -->
+      <div class="chat-input">
         <textarea ng-model="userMessage" placeholder="Type your message..."></textarea>
-        <button ng-click="sendMessage()">Send</button>
+        <button ng-click="sendMessage()" class="btn">Send</button>
+      </div>
     </div>
     
     <div ng-show="activeTab === 'knowledge'" ng-controller="KnowledgeBaseController">
-        <h3>Upload Files to Knowledge Base</h3>
-        <input type="file" file-model="file" />
-        <button ng-click="uploadFile()">Upload</button>
-        <p>{{ uploadMessage }}</p>
-    
-        <h3>Your Uploaded Files</h3>
+      <h3>Upload Files to Knowledge Base</h3>
+      <div class="file-upload">
+        <div class="file-input-wrapper">
+          <input type="file" file-model="file" id="fileInput" />
+          <label for="fileInput">Choose File</label>
+        </div>
+        <button ng-click="uploadFile()" class="btn">Upload</button>
+        <p class="message" ng-if="uploadMessage">{{ uploadMessage }}</p>
+      </div>
+      
+      <h3>Your Uploaded Files</h3>
+      <div class="file-list">
         <ul>
-            <li ng-repeat="file in userFiles">
-                {{ file.filename }}
-            </li>
+          <li ng-repeat="file in userFiles" class="file-item fade-in">
+            <div class="file-name">
+              <span class="file-icon">📄</span>
+              {{ file.filename }}
+            </div>
+          </li>
         </ul>
         <p ng-if="userFiles.length === 0">No files uploaded yet.</p>
+      </div>
     </div>
-    
-</div>
-
-
-<style>
-    .tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.tabs button {
-    padding: 10px 15px;
-    border: none;
-    background-color: #ddd;
-    cursor: pointer;
-}
-
-.tabs button.active {
-    background-color: #007bff;
-    color: white;
-}
-
-input[type="file"] {
-    margin: 10px 0;
-}
-
-</style>
+  </div>

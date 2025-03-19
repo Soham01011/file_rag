@@ -1,17 +1,27 @@
-<h2>Register</h2>
-<form ng-submit="registerUser()" ng-controller="RegisterController">
-    <label>Username:</label>
-    <input type="text" ng-model="user.username" required><br>
-
-    <label>Email:</label>
-    <input type="email" ng-model="user.email" required><br>
-
-    <label>Password:</label>
-    <input type="password" ng-model="user.password" required><br>
-
-    <label>Confirm Password:</label>
-    <input type="password" ng-model="user.conf_pass" required><br>
-
-    <button type="submit" id="submit" value="Submit">Register</button>
-</form>
-<p>{{ message }}</p>
+<div class="fade-in">
+    <h2>Register</h2>
+    <form ng-submit="registerUser()" ng-controller="RegisterController">
+      <div class="form-group">
+        <label>Username:</label>
+        <input type="text" ng-model="user.username" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" ng-model="user.email" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" ng-model="user.password" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Confirm Password:</label>
+        <input type="password" ng-model="user.conf_pass" required>
+      </div>
+      
+      <button type="submit" id="submit" value="Submit" class="btn">Register</button>
+    </form>
+    <p class="message" ng-class="{'message-success': message.includes('successful'), 'message-error': message.includes('Error')}">{{ message }}</p>
+  </div>
