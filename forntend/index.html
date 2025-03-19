@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="myApp">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File_RAG</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
-    <script src="app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File_RAG</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+  <script src="app.js"></script>
 </head>
 <body>
-
-    <h1>Welcome to file_RAG</h1>
-    <a href="#!/">Home</a> |
-    <a href="#!/register">Register</a> |
-    <a href="#!/login">Login</a> |
-    <a href="#!/dashboard">Dashboard</a>
-
-    <div ng-view></div>  <!-- This is where views will load -->
-
+  <header>
+    <div class="header-content container">
+      <h1 class="logo">File<span>_RAG</span></h1>
+      <nav>
+        <a href="#!/">Home</a> |
+        <a href="#!/register">Register</a> |
+        <a href="#!/login">Login</a> |
+        <a href="#!/dashboard">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="container">
+    <div ng-view></div> <!-- This is where views will load -->
+  </main>
 </body>
 </html>

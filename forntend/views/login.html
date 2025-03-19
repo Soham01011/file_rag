@@ -1,11 +1,17 @@
-<p>Login Page</p>
-<form ng-submit="loginUser()" ng-controller="LoginController">
-    <label>Username:</label>
-    <input type="text" ng-model="user.username" required><br>
-
-    <label>Password:</label>
-    <input type="password" ng-model="user.password" required><br>
-
-    <button type="submit" id="submit" value="Submit">Register</button>
-    <p>{{ message }}</p>
-</form>
+<div class="fade-in">
+    <h2>Login</h2>
+    <form ng-submit="loginUser()" ng-controller="LoginController">
+      <div class="form-group">
+        <label>Username:</label>
+        <input type="text" ng-model="user.username" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" ng-model="user.password" required>
+      </div>
+      
+      <button type="submit" id="submit" value="Submit" class="btn">Login</button>
+    </form>
+    <p class="message" ng-class="{'message-success': message.includes('successful'), 'message-error': message.includes('Error')}">{{ message }}</p>
+  </div>

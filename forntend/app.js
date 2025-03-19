@@ -31,7 +31,7 @@ app.controller("RegisterController", function($scope, $http) {
   $scope.registerUser = function() {
       console.log("User Data Submitted:", $scope.user);
 
-      $http.post("http://127.0.0.1:8000/auth/register", $scope.user)
+      $http.post("http://192.168.1.127:8000/auth/register", $scope.user)
           .then(function(response) {
               console.log("Response from API:", response.data);
               
@@ -52,7 +52,7 @@ app.controller("LoginController", function($scope, $http) {
     $scope.message = "";
 
     $scope.loginUser = function() {
-        $http.post("http://127.0.0.1:8000/auth/login", $scope.user)
+        $http.post("http://192.168.1.127:8000/auth/login", $scope.user)
             .then(function(response) {
                 $scope.message = "Login successful! ", JSON.stringify(response.data);
                 localStorage.setItem("access_token", response.data.access_token);
@@ -82,7 +82,7 @@ app.controller("DashboardController", function($scope, FileUploadService, $http,
     };
 
     // Verify token
-    $http.get("http://127.0.0.1:8000/auth/verify", {
+    $http.get("http://192.168.1.127:8000/auth/verify", {
         headers: { "Authorization": "Bearer " + token }
     }).then(function(response) {
         $scope.$applyAsync(function() {
@@ -114,7 +114,7 @@ app.controller("KnowledgeBaseController", function($scope, $http, FileUploadServ
     $scope.userFiles = [];
 
     // Fetch user's uploaded files (if needed)
-    $http.get("http://127.0.0.1:8000/files/myfiles", {
+    $http.get("http://192.168.1.127:8000/files/myfiles", {
         headers: { "Authorization": "Bearer " + token }
     }).then(function(response) {
         $scope.userFiles = response.data;
@@ -156,7 +156,7 @@ app.controller("ChatsController", function ($scope, $http) {
 
         var data = { user_message: $scope.userMessage };
 
-        $http.post("http://127.0.0.1:8000/chat/chat", data, {
+        $http.post("http://192.168.1.127:8000/chat/chat", data, {
             headers: { 
                 "Authorization": "Bearer " + token,
                 "Content-Type": "application/json"  // Ensure JSON request
@@ -214,7 +214,7 @@ app.service("FileUploadService", function($http) {
         var formData = new FormData();
         formData.append("file", file);
 
-        return $http.post("http://127.0.0.1:8000/files/upload", formData, {
+        return $http.post("http://192.168.1.127:8000/files/upload", formData, {
             headers: {
                 "Content-Type": undefined, // Let the browser set multipart/form-data
                 "Authorization": "Bearer " + token
