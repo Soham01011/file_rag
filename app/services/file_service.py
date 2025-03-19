@@ -24,29 +24,34 @@ async def save_file(uploaded_file: UploadFile) -> str:
 
 # file_service.py (updated)
 async def record_file_metadata(filename: str, username: str, filelocation: str) -> dict:
+    """Stores file metadata and adds content to FAISS."""
+    
+    # Generate ext_id before inserting into MongoDB
+    ext_id = abs(hash(f"{username}_{filename}")) % (10**12)
+
     file_data = {
         "filename": filename,
         "username": username,
         "filelocation": filelocation,
-        "uploaded_at": datetime.utcnow()
+        "uploaded_at": datetime.utcnow(),
+        "ext_id": ext_id  # Store ext_id directly
     }
 
-    # Insert document into MongoDB
+    # Insert metadata into MongoDB (with ext_id already set)
     result = await files_collection.insert_one(file_data)
-    file_id = result.inserted_id  # Get the MongoDB ObjectId
 
-    # Generate ext_id from the ObjectId
-    ext_id = abs(hash(str(file_id))) % (10**12)
+    # Extract text safely
+    try:
+        raw_text = extract_text_from_file(filelocation)
+        if raw_text.strip():  # Ensure the file isn't empty
+            await add_text_to_user_index(username, raw_text, ext_id)
+        else:
+            print(f"Warning: No text extracted from {filelocation}")
+    except Exception as e:
+        print(f"Error extracting text: {e}")
 
-    # Update the document to store ext_id
-    await files_collection.update_one(
-        {"_id": file_id}, 
-        {"$set": {"ext_id": ext_id}}
-    )
-
-    # Extract text and add to FAISS index
-    raw_text = extract_text_from_file(filelocation)
-    add_text_to_user_index(username, raw_text, ext_id)
+    # Convert _id for JSON response
+    file_data["_id"] = str(result.inserted_id)
 
     return file_data
 
