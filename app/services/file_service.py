@@ -33,20 +33,23 @@ async def record_file_metadata(filename: str, username: str, filelocation: str) 
 
     # Insert document into MongoDB
     result = await files_collection.insert_one(file_data)
-    file_id = result.inserted_id  # Get the MongoDB ObjectId
 
-    # Generate ext_id from the ObjectId
-    ext_id = abs(hash(str(file_id))) % (10**12)
+    # Generate ext_id based on filename and username
+    ext_id = abs(hash(f"{username}_{filename}")) % (10**12)
 
-    # Update the document to store ext_id
+    # Update the document using filename and username instead of _id
     await files_collection.update_one(
-        {"_id": file_id}, 
+        {"filename": filename, "username": username}, 
         {"$set": {"ext_id": ext_id}}
     )
 
     # Extract text and add to FAISS index
     raw_text = extract_text_from_file(filelocation)
     add_text_to_user_index(username, raw_text, ext_id)
+
+    # Convert _id to string before returning
+    file_data["_id"] = str(result.inserted_id)  # Convert ObjectId to string
+    file_data["ext_id"] = ext_id  # Use ext_id for reference
 
     return file_data
 
