@@ -44,11 +44,11 @@ jobs:
  
     - name: Commit and push updated deployment
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TKN: ${{ secrets.GH_TKN }}
       run: |
         git config --global user.email "github-actions@github.com"
         git config --global user.name "GitHub Actions"
-        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+        git remote set-url origin https://x-access-token:${GH_TKN}@github.com/${{ github.repository }}.git
         git add deployment/deployment.yaml
         git commit -m "Update deployment image to ${{ env.NEW_TAG }}"
         git pull origin main --rebase  # Prevent conflicts
