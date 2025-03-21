@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: file-rag-config
+data:
+  MONGO_URI: "mongodb://mongodb:27017"
+  DB_NAME: "myapp_db"
+  SECRET_KEY: "supersecretkey"
+  ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  clusterIP: None  # Headless service for internal communication
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-rag
+spec:
+  replicas: 2  # Number of instances
+  selector:
+    matchLabels:
+      app: file-rag
+  template:
+    metadata:
+      labels:
+        app: file-rag
+    spec:
+      containers:
+      - name: file-rag
+        image: sohamdalvi05/filereader_rag:v1
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: file-rag-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: file-rag-service
+spec:
+  selector:
+    app: file-rag
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: LoadBalancer  # Change to NodePort if needed
