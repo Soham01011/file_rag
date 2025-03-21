@@ -1,12 +1,16 @@
 import os
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
+
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 async def get_gemini_response(prompt: str) -> str:
     """
     Sends the user message with context to the Gemini API and returns the response.
     """
-    client = genai.Client(api_key="AIzaSyBrmxy7fu6MU8I38NpgeAjUePNE1_v20jY")
+    client = genai.Client(api_key=GEMINI_API_KEY)
     model = "gemini-2.0-flash"
 
     contents = [types.Content(role="user", parts=[types.Part.from_text(text=prompt)])]

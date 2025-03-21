@@ -5,7 +5,8 @@ import aiofiles
 from app.database.connection import files_collection  
 from typing import List
 from app.services.document_loaders import extract_text_from_file
-from app.services.embedding import add_text_to_user_index  # from vector_store.py
+from app.services.embedding import add_text_to_user_index 
+from textwrap import wrap
 
 UPLOAD_DIR = "uploads"
 
@@ -41,10 +42,19 @@ async def record_file_metadata(filename: str, username: str, filelocation: str) 
     result = await files_collection.insert_one(file_data)
 
     # Extract text safely
+    
     try:
         raw_text = extract_text_from_file(filelocation)
+        
         if raw_text.strip():  # Ensure the file isn't empty
-            await add_text_to_user_index(username, raw_text, ext_id)
+            words = raw_text.split()  # Split text into words
+            chunk_size = 1000  # Define chunk size
+            
+            # Create chunks of 1000 words
+            chunks = [" ".join(words[i:i+chunk_size]) for i in range(0, len(words), chunk_size)]
+            
+            for chunk in chunks:
+                await add_text_to_user_index(username, chunk, ext_id)
         else:
             print(f"Warning: No text extracted from {filelocation}")
     except Exception as e:

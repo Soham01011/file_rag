@@ -6,7 +6,6 @@ from sentence_transformers import SentenceTransformer
 # Load the transformer model
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Determine the embedding dimension (384 for all-MiniLM-L6-v2)
 embedding_dim = 384
 
 # Directory to store FAISS indexes
